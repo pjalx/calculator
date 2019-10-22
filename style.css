@@ -14,13 +14,12 @@ body {
 }
 
 #disp {
-    min-height: 140px;
+    min-height: 110px;
     background: silver;
     margin: 10px;
     border-radius: 10px;
     font-size: 70px;
     text-align: right;
-    line-height: 140px;
     padding-right: 5px;
     color: rgb(60, 60, 60);
     overflow-wrap: break-word;
@@ -52,8 +51,9 @@ body {
     align-items: center;
     font-size: 40px;
     border-radius: 3px;
+    user-select: none;
 }
 
-.plus {
-    height: 164px;
+.butts:hover {
+    cursor: pointer;
 }
