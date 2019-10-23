@@ -25,6 +25,15 @@ function operate (operator, num1, num2) {
     if (operator == '+') {
         DISPLAY.textContent = add(num1, num2);
     }
+    else if (operator == '-') {
+        DISPLAY.textContent = subtract(num1, num2);
+    }
+    else if (operator == '*') {
+        DISPLAY.textContent = multiply(num1, num2);
+    }
+    else if (operator == '/') {
+        DISPLAY.textContent = divide(num1, num2);
+    }
 }
 
 function calulate(e) {
@@ -32,9 +41,20 @@ function calulate(e) {
         switch (this.id) {
             case '=':
                 if (int1 && int2) {
+                 opstring += this.textContent;
                  operate(op, int1, int2);
                 }
                 break;
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                if (int1) {
+                    opstring += this.id;
+                    op = this.textContent;
+                    DISPLAY.textContent += ` ${this.textContent} `;
+                }
+                break;    
             case 'C':
                 int1 = '';
                 int2 = '';
@@ -56,39 +76,18 @@ function calulate(e) {
             case '7':
             case '8':
             case '9':
-                alert(this.id);
+                opstring += this.textContent;
+                if (!op) {
+                    int1 += this.textContent;
+                    DISPLAY.textContent += this.textContent;
+                }
+                else if (op) {
+                    int2 += this.textContent;
+                    DISPLAY.textContent += this.textContent;
+                }
         }
     }
 }
 
 
 BUTTONS.forEach(button => button.addEventListener('click', calulate));
-/*
-BUTTONS.forEach(button => button.addEventListener('click', function(e) {
-    if (this.id == '=' ) {
-        DISPLAY.textContent = '';
-        operate(op, int1, int2)
-    }
-    if (this.classList.contains('syms')) {
-        if (!op) {
-            op = this.textContent;
-            opstring += this.textContent;
-            DISPLAY.textContent = '';
-        }
-    }
-    if (this.classList.contains('nums')) {
-        if (!op) {
-            opstring +=this.textContent;
-            int1 += this.textContent;
-            DISPLAY.textContent += this.textContent;
-            console.log(opstring);
-        }
-        else if (op) {
-            opstring +=this.textContent;
-            int2 += this.textContent;
-            DISPLAY.textContent += this.textContent;
-            console.log(opstring);
-        }
-    }    
-}));
-*/
