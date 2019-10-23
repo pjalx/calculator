@@ -15,7 +15,7 @@ body {
 
 #disp {
     min-height: 110px;
-    background: silver;
+    background: rgb(160,160,160);
     margin: 10px;
     border-radius: 10px;
     font-size: 70px;
@@ -28,7 +28,7 @@ body {
 #buttons_container {
     height: 560px;
     margin: 20px 10px;
-    background: silver;
+    background: rgb(160,160,160);
     border-radius: 5px;
     display: flex;
     justify-content: space-evenly;
