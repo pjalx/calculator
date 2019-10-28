@@ -6,46 +6,48 @@ let opMode = false;
 let equalsMode = false;
 let opArray = [];
 
-
-function add (num1, num2) {
-    return +num1 + +num2;
-}
-
-function subtract (num1, num2) {
-    return +num1 - +num2;
-}
-
-function multiply (num1, num2) {
-    return +num1 * +num2;
-}
-
-function divide (num1, num2) {
-    return +num1 / +num2;
-}
-
 function operate(arr) {
-    console.log(arr);
-    opstring = +arr[0] + +arr[2];
+    let nArr = arr.map(str => isNaN(str) ? str : +str);
+    const ADD = (aAarr) => aAarr[0] + aAarr[2];
+    const SUBTRACT = (sArr) => sArr[0] - sArr[2];
+    const MULTIPLY = (mArr) => mArr[0] * mArr[2];
+    const DIVIDE = (dArr) => dArr[0] / dArr[2];
+    let quotientOrProduct;
+    let sumOrDifference;
+    let tempSlice;
+
+    quotientOrProduct = nArr.findIndex(index => /^[\/*]$/.test(index));
+    while (quotientOrProduct != -1) {
+        tempSlice = nArr.slice(quotientOrProduct -1, quotientOrProduct +2);
+        if (tempSlice[1] == '/') {
+            tempSlice = DIVIDE(tempSlice);
+        }
+        else if (tempSlice[1] == '*') {
+            tempSlice = MULTIPLY(tempSlice);
+        }
+        nArr.splice(quotientOrProduct -1, 3, tempSlice);
+        quotientOrProduct = nArr.findIndex(index => /^[\/*]$/.test(index));
+    }
+
+    sumOrDifference = nArr.findIndex(index => /^[+-]$/.test(index));
+    while (sumOrDifference != -1) {
+        tempSlice = nArr.slice(sumOrDifference -1, sumOrDifference +2);
+        if (tempSlice[1] == '+') {
+            tempSlice = ADD(tempSlice);
+        }
+        else if (tempSlice[1] == '-') {
+            tempSlice = SUBTRACT(tempSlice);
+        }
+        nArr.splice(sumOrDifference -1, 3, tempSlice);
+        sumOrDifference = nArr.findIndex(index => /^[+-]$/.test(index));
+    }
+
+    equalsMode = true;    
+    
+    return opstring += ` = ${nArr.join()}`
 }
 
-/*
-function operate (operator, num1, num2) {
-    if (operator == '+') {
-        DISPLAY.textContent = add(num1, num2);
-    }
-    else if (operator == '-') {
-        DISPLAY.textContent = subtract(num1, num2);
-    }
-    else if (operator == '*') {
-        DISPLAY.textContent = multiply(num1, num2);
-    }
-    else if (operator == '/') {
-        DISPLAY.textContent = divide(num1, num2);
-    }
-}
-*/
-
-function calulate(e) {
+function formulate(e) {
     if (this.classList.contains('nums')) {
         switch (this.id) {
             case '0':
@@ -58,6 +60,10 @@ function calulate(e) {
             case '7':
             case '8':
             case '9':
+                if (equalsMode) {
+                    opstring = '';
+                    equalsMode = false;
+                }
                 if (numMode) {
                     opstring += `${this.textContent}`;
                     opMode = true;
@@ -70,12 +76,7 @@ function calulate(e) {
             switch (this.id) {
                 case '=':
                     opArray = opstring.split(' ');
-                    //opstring = '';
                     operate(opArray);
-                    /*
-                    opArray = opstring.split(' ');
-                    opstring += ` ${this.textContent} answer to come`;
-                    */
                     break;
                 case '+':
                 case '-':
@@ -94,59 +95,4 @@ function calulate(e) {
     DISPLAY.textContent = opstring;
 }
 
-/*
-function calulate(e) {
-    if (this.classList.contains('syms')) {
-        switch (this.id) {
-            case '=':
-                if (int1 && int2) {
-                 opstring += this.textContent;
-                 operate(op, int1, int2);
-                }
-                break;
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-                if (int1) {
-                    opstring += this.id;
-                    op = this.textContent;
-                    DISPLAY.textContent += ` ${this.textContent} `;
-                }
-                break;    
-            case 'C':
-                int1 = '';
-                int2 = '';
-                op = '';
-                opstring = '';
-                DISPLAY.textContent = '';
-                break;
-        }
-    }
-    if (this.classList.contains('nums')) {
-        switch (this.id) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                opstring += this.textContent;
-                if (!op) {
-                    int1 += this.textContent;
-                    DISPLAY.textContent += this.textContent;
-                }
-                else if (op) {
-                    int2 += this.textContent;
-                    DISPLAY.textContent += this.textContent;
-                }
-        }
-    }
-}
-*/
-
-BUTTONS.forEach(button => button.addEventListener('click', calulate));
+BUTTONS.forEach(button => button.addEventListener('click', formulate));
