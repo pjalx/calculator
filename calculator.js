@@ -1,10 +1,63 @@
 const BUTTONS = document.querySelectorAll('.butts');
 const DISPLAY = document.getElementById('disp');
-let opstring = '';
+let opstring = `0`;
 let numMode = true;
 let opMode = false;
-let equalsMode = false;
+let equaledMode = false;
 let opArray = [];
+
+DISPLAY.textContent = opstring;
+
+function formulate(e) {
+    if (this.classList.contains('nums')) {
+        switch (this.id) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                if (equaledMode) {
+                    opstring = `0`;
+                    equaledMode = false;
+                }
+                if (numMode) {
+                    if (opstring === `0`) {
+                        opstring = ``;
+                    }
+                    opstring += `${this.textContent}`;
+                    opMode = true;
+                }
+            }
+        }
+        
+    if (this.classList.contains('syms')) {
+        if (opMode || this.id == 'C') {
+            switch (this.id) {
+                case '=':
+                    opArray = opstring.split(' ');
+                    operate(opArray);
+                    break;
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    opstring += ` ${this.textContent} `;
+                    break;    
+                case 'C':
+                    opstring = `0`;
+                    opArray = [];
+                    break;
+            }
+        }
+        opMode = false;
+    }
+    DISPLAY.textContent = opstring;
+}
 
 function operate(arr) {
     let nArr = arr.map(str => isNaN(str) ? str : +str);
@@ -42,57 +95,9 @@ function operate(arr) {
         sumOrDifference = nArr.findIndex(index => /^[+-]$/.test(index));
     }
 
-    equalsMode = true;    
+    equaledMode = true;    
     
     return opstring += ` = ${nArr.join()}`
-}
-
-function formulate(e) {
-    if (this.classList.contains('nums')) {
-        switch (this.id) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                if (equalsMode) {
-                    opstring = '';
-                    equalsMode = false;
-                }
-                if (numMode) {
-                    opstring += `${this.textContent}`;
-                    opMode = true;
-                }
-            }
-        }
-        
-    if (this.classList.contains('syms')) {
-        if (opMode || this.id == 'C') {
-            switch (this.id) {
-                case '=':
-                    opArray = opstring.split(' ');
-                    operate(opArray);
-                    break;
-                case '+':
-                case '-':
-                case '*':
-                case '/':
-                    opstring += ` ${this.textContent} `;
-                    break;    
-                case 'C':
-                    opstring = '';
-                    opArray = [];
-                    break;
-            }
-        }
-        opMode = false;
-    }
-    DISPLAY.textContent = opstring;
 }
 
 BUTTONS.forEach(button => button.addEventListener('click', formulate));
