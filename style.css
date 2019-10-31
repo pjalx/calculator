@@ -14,17 +14,18 @@ body {
 }
 
 #disp {
-    min-height: 110px;
-    background: rgb(160,160,160);
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 130px;
+    background: rgb(136, 237, 255);
     display: flex;
     flex-flow: column;
     align-items: flex-end;
     justify-content: center;
     margin: 10px;
     border-radius: 10px;
-    font-size: 3em;
+    font-size: 2.5em;
     text-align: right;
-    padding-right: 5px;
+    padding-right: 10px;
     color: rgb(60, 60, 60);
     word-break: break-word;
     /*overflow-wrap: break-word;*/
@@ -33,7 +34,6 @@ body {
 #buttons_container {
     height: 560px;
     margin: 20px 10px;
-    background: rgb(160,160,160);
     border-radius: 5px;
     display: flex;
     justify-content: space-evenly;
@@ -50,7 +50,7 @@ body {
     height: 72px;
     width: 70px;
     background: rgb(60, 60, 60);
-    color: skyblue;
+    color: rgb(136, 237, 255);
     display: flex;
     justify-content: center;
     align-items: center;
