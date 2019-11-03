@@ -3,12 +3,12 @@ body {
 }
 
 #calc {
-    border: 1px solid skyblue;
+    border: 1px solid rgb(10, 160, 250);
     min-height: 700px;
     width: 500px;
     display: flex;
     flex-direction: column;
-    background: skyblue;
+    background: rgb(10, 160, 250);
     border-radius: 5px;
     margin: auto;
 }
@@ -57,6 +57,10 @@ body {
     font-size: 40px;
     border-radius: 3px;
     user-select: none;
+}
+
+.equals {
+    background: red;
 }
 
 .butts:hover {
