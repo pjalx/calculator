@@ -6,7 +6,11 @@ let numMode = true;
 let opMode = false;
 let equaledMode = false;
 let backMode = false;
+let tempArray = [];
 let opArray = [];
+let ranNum = function(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 DISPLAY.textContent = opstring;
 
@@ -18,19 +22,38 @@ function formulate(e) {
         }
     }
 
-    if (this.classList.contains('nums')) {
+    if (this.classList.contains('nums') || this.classList.contains('spec-opers')) {
         switch (this.id) {
+            case 'posorneg':
+                if (numMode && opMode && !equaledMode) {
+                    tempArray = opstring.split(' ');
+                    /^[-]/.test(tempArray[tempArray.length -1]) ? tempArray[tempArray.length -1] = `${tempArray[tempArray.length -1].slice(1)}` : tempArray[tempArray.length -1] = `-${tempArray[tempArray.length -1]}`;
+                    opstring = tempArray.join(' ');
+                    DISPLAY.textContent = opstring;
+                    tempArray = [];
+                }
+                break;
+            case '%':
+                if (numMode && opMode && !equaledMode){
+                    tempArray = opstring.split(' ');
+                    tempArray[tempArray.length -1] = (+tempArray[tempArray.length -1] /100).toString();
+                    opstring = tempArray.join(' ');
+                    DISPLAY.textContent = opstring;
+                    tempArray = [];
+                }
+                break;
             case '.':
                 if (!opstring.split(' ').pop().includes('.') && numMode) {
                     if (equaledMode) {
                         opstring = `${interResult}${this.textContent}`;
                         interResult = ``;
                         equaledMode = false;
+                        backMode = false;
                     }else {
                         opstring += `${this.textContent}`;
+                        backMode = true;
                     }
                 }
-                backMode = true;
                 opMode = false;
                 break;
             case '0':
@@ -59,7 +82,7 @@ function formulate(e) {
         }
     }
 
-    if (this.classList.contains('syms')) {
+    if (this.classList.contains('opers')) {
         if (opMode || this.id == 'C' || opstring === '0') {
             switch (this.id) {
                 case '=':
@@ -75,6 +98,7 @@ function formulate(e) {
                 case 'C':
                     opstring = `0`;
                     opArray = [];
+                    tempArray = [];
                     interResult = ``;
                     equaledMode = false;
                     numMode = true;
@@ -98,9 +122,9 @@ function formulate(e) {
         opMode = false;
         backMode = false;
 
-        if(!opMode && !equaledMode) {
+        /*if(!opMode && !equaledMode) {
             backMode = true;
-        }
+        }*/
     }
     DISPLAY.textContent = opstring;
     
@@ -109,19 +133,14 @@ function formulate(e) {
 
 function operate(arr) {
     let nArr = arr.map(str => isNaN(str) ? str : +str);
-    let ranNum = function() {
-        let min = 0;
-        let max = 3;
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
     let snarkResponse = ``;
-    const SNARK = [`Oh The Humanity, It is a wonder you can walk upright!`, `Welp, you went and did that then, didn't you?!? DIDN'T YOU!!!???`, `To Err is Human, to divide by zero is so grevious as to render any attempt at forgivness futile.`, `Take that junk to the mall homie!`];
+    const SNARK = [`Oh The Humanity, It is a wonder you can walk upright!`, `Welp, you went and did that then, didn't you?!? DIDN'T YOU!!!???`, `To Err is Human, to divide by zero is so grievous as to render any attempt at forgivness futile.`, `Take that junk to the mall homie!`];
     const ADD = (aAarr) => aAarr[0] + aAarr[2];
     const SUBTRACT = (sArr) => sArr[0] - sArr[2];
     const MULTIPLY = (mArr) => mArr[0] * mArr[2];
     const DIVIDE = (dArr) => {
         if (dArr[0] == 0 || dArr[2] == 0) {
-            return snarkResponse = SNARK[ranNum()];
+            return snarkResponse = SNARK[ranNum(0, 3)];
         }else {
             return dArr[0] / dArr[2];
         }
@@ -155,18 +174,17 @@ function operate(arr) {
         nArr.splice(sumOrDifference - 1, 3, tempSlice);
         sumOrDifference = nArr.findIndex(index => /^[+-]$/.test(index));
     }
-
+    //(snarkResponse) ? backdMode = false : backMode = true;
     (snarkResponse) ? numMode = false : numMode = true;
     (snarkResponse) ? equaledMode = false : equaledMode = true;
-    (snarkResponse) ? backdMode = false : backMode = true;
     (snarkResponse) ? interResult = `` : interResult = nArr.join();
     (snarkResponse) ? opstring = snarkResponse : opstring += ` = ${nArr.join()}`;
 }
 
 BUTTONS.forEach(button => button.addEventListener('click', formulate));
-document.addEventListener('keydown', (e) => {
-    console.log(e.key);
-    if(e.key == 'Backspace') {
-        document.body.style.backgroundColor = 'gold';
-    }
+DISPLAY.addEventListener('click', function(e) {
+    let rgb = `rgb(${ranNum(100,255)}, ${ranNum(100,255)}, ${ranNum(100,255)})`
+    let calc = document.getElementById('calc');
+    calc.style.background = rgb;
+    calc.style.border = `2px solid ${rgb}`;
 });
