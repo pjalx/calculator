@@ -8,127 +8,246 @@ let equaledMode = false;
 let backMode = false;
 let tempArray = [];
 let opArray = [];
-let ranNum = function(min, max) {
+let ranNum = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 DISPLAY.textContent = opstring;
 
 function formulate(e) {
-    if (this.classList.contains('back') && backMode) {
-        if (/[0-9.]/.test(opstring[opstring.length - 1])) {
-            opstring = opstring.substring(0, opstring.length - 1) || `0`;
-            DISPLAY.textContent = opstring;
+    if (e.type == 'click') {
+        if (this.classList.contains('back') && backMode) {
+            if (/[0-9.]/.test(opstring[opstring.length - 1])) {
+                opstring = opstring.substring(0, opstring.length - 1) || `0`;
+                DISPLAY.textContent = opstring;
+            }
         }
+
+        if (this.classList.contains('nums') || this.classList.contains('spec-opers')) {
+            switch (this.id) {
+                case 'posorneg':
+                    if (numMode && opMode && !equaledMode) {
+                        tempArray = opstring.split(' ');
+                        /^[-]/.test(tempArray[tempArray.length - 1]) ? tempArray[tempArray.length - 1] = `${tempArray[tempArray.length - 1].slice(1)}` : tempArray[tempArray.length - 1] = `-${tempArray[tempArray.length - 1]}`;
+                        opstring = tempArray.join(' ');
+                        DISPLAY.textContent = opstring;
+                        tempArray = [];
+                    }
+                    break;
+                case '%':
+                    if (numMode && opMode && !equaledMode) {
+                        tempArray = opstring.split(' ');
+                        tempArray[tempArray.length - 1] = (+tempArray[tempArray.length - 1] / 100).toString();
+                        opstring = tempArray.join(' ');
+                        DISPLAY.textContent = opstring;
+                        tempArray = [];
+                    }
+                    break;
+                case '.':
+                    if (!opstring.split(' ').pop().includes('.') && numMode) {
+                        if (equaledMode) {
+                            opstring = `${interResult}${this.textContent}`;
+                            interResult = ``;
+                            equaledMode = false;
+                            backMode = false;
+                        } else {
+                            opstring += `${this.textContent}`;
+                            backMode = true;
+                        }
+                        opMode = false;
+                    }
+                    break;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    if (equaledMode) {
+                        opstring = `0`;
+                        equaledMode = false;
+                        interResult = ``;
+                    }
+                    if (numMode) {
+                        if (opstring == `0`) {
+                            opstring = ``;
+                        }
+                        opstring += `${this.textContent}`;
+                        opMode = true;
+                        backMode = true;
+                    }
+            }
+        }
+
+        if (this.classList.contains('opers')) {
+            if (opMode || this.id == 'C' || opstring === '0') {
+                switch (this.id) {
+                    case '=':
+                        opArray = opstring.split(' ');
+                        operate(opArray);
+                        break;
+                    case '+':
+                    case '-':
+                    case '*':
+                    case '/':
+                        opstring += ` ${this.textContent} `;
+                        break;
+                    case 'C':
+                        opstring = `0`;
+                        opArray = [];
+                        tempArray = [];
+                        interResult = ``;
+                        equaledMode = false;
+                        numMode = true;
+                        break;
+                }
+            }
+
+            if (equaledMode) {
+                switch (this.id) {
+                    case '+':
+                    case '-':
+                    case '*':
+                    case '/':
+                        opstring = `${interResult} ${this.textContent} `;
+                        equaledMode = false;
+                        break;
+                }
+
+            }
+
+            opMode = false;
+            backMode = false;
+
+            /*if(!opMode && !equaledMode) {
+                backMode = true;
+            }*/
+        }
+
+        console.log(`this.id = ${this.id}  interResult = ${interResult}  opstring = ${opstring}  opMode = ${opMode}  equaledMode = ${equaledMode}  backMode = ${backMode} And ${e.type} is the EVENT TYPE`);
+
     }
 
-    if (this.classList.contains('nums') || this.classList.contains('spec-opers')) {
-        switch (this.id) {
-            case 'posorneg':
+    if (e.type == 'keydown') {
+        if ((e.code == 'Backspace' || e.code == 'Delete') && backMode) {
+            if (/[0-9.]/.test(opstring[opstring.length - 1])) {
+                opstring = opstring.substring(0, opstring.length - 1) || `0`;
+                DISPLAY.textContent = opstring;
+            }
+        }
+
+        switch (e.code) {
+            case 'Minus':
                 if (numMode && opMode && !equaledMode) {
                     tempArray = opstring.split(' ');
-                    /^[-]/.test(tempArray[tempArray.length -1]) ? tempArray[tempArray.length -1] = `${tempArray[tempArray.length -1].slice(1)}` : tempArray[tempArray.length -1] = `-${tempArray[tempArray.length -1]}`;
+                    /^[-]/.test(tempArray[tempArray.length - 1]) ? tempArray[tempArray.length - 1] = `${tempArray[tempArray.length - 1].slice(1)}` : tempArray[tempArray.length - 1] = `-${tempArray[tempArray.length - 1]}`;
                     opstring = tempArray.join(' ');
                     DISPLAY.textContent = opstring;
                     tempArray = [];
                 }
                 break;
-            case '%':
-                if (numMode && opMode && !equaledMode){
-                    tempArray = opstring.split(' ');
-                    tempArray[tempArray.length -1] = (+tempArray[tempArray.length -1] /100).toString();
-                    opstring = tempArray.join(' ');
-                    DISPLAY.textContent = opstring;
-                    tempArray = [];
-                }
-                break;
-            case '.':
+            case 'NumpadDecimal':
                 if (!opstring.split(' ').pop().includes('.') && numMode) {
                     if (equaledMode) {
-                        opstring = `${interResult}${this.textContent}`;
+                        opstring = `${interResult}${e.key}`;
                         interResult = ``;
                         equaledMode = false;
                         backMode = false;
-                    }else {
-                        opstring += `${this.textContent}`;
+                    } else {
+                        opstring += `${e.key}`;
                         backMode = true;
                     }
+                    opMode = false;
                 }
-                opMode = false;
                 break;
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
+            case 'Digit5':
+                if (e.key == '%')
+                    if (numMode && opMode && !equaledMode) {
+                        tempArray = opstring.split(' ');
+                        tempArray[tempArray.length - 1] = (+tempArray[tempArray.length - 1] / 100).toString();
+                        opstring = tempArray.join(' ');
+                        DISPLAY.textContent = opstring;
+                        tempArray = [];
+                    }
+                break;
+            case 'Numpad0':
+            case 'Numpad1':
+            case 'Numpad2':
+            case 'Numpad3':
+            case 'Numpad4':
+            case 'Numpad5':
+            case 'Numpad6':
+            case 'Numpad7':
+            case 'Numpad8':
+            case 'Numpad9':
                 if (equaledMode) {
                     opstring = `0`;
                     equaledMode = false;
                     interResult = ``;
                 }
                 if (numMode) {
-                   if (opstring == `0`) {
+                    if (opstring == `0`) {
                         opstring = ``;
                     }
-                    opstring += `${this.textContent}`;
+                    opstring += `${e.key}`;
                     opMode = true;
                     backMode = true;
                 }
+                break;
         }
-    }
 
-    if (this.classList.contains('opers')) {
-        if (opMode || this.id == 'C' || opstring === '0') {
-            switch (this.id) {
-                case '=':
+        if (opMode || e.code == 'KeyC' || opstring === '0') {
+            switch (e.code) {
+                case 'NumpadEnter':
                     opArray = opstring.split(' ');
                     operate(opArray);
+                    opMode = false;
+                    backMode = false;
                     break;
-                case '+':
-                case '-':
-                case '*':
-                case '/':
-                    opstring += ` ${this.textContent} `;
-                    break;
-                case 'C':
+                case 'KeyC':
                     opstring = `0`;
                     opArray = [];
                     tempArray = [];
                     interResult = ``;
                     equaledMode = false;
                     numMode = true;
+                    opMode = false;
+                    backMode = false;
+                    break;
+                case 'NumpadAdd':
+                case 'NumpadSubtract':
+                case 'NumpadMultiply':
+                case 'NumpadDivide':
+                    opstring += ` ${e.key} `;
+                    opMode = false;
+                    backMode = false;
                     break;
             }
-        }
 
+        }
         if (equaledMode) {
-            switch (this.id) {
-                case '+':
-                case '-':
-                case '*':
-                case '/':
-                    opstring = `${interResult} ${this.textContent} `;
+            switch (e.code) {
+                case 'NumpadAdd':
+                case 'NumpadSubtract':
+                case 'NumpadMultiply':
+                case 'NumpadDivide':
+                    opstring = `${interResult} ${e.key} `;
                     equaledMode = false;
+                    opMode = false;
+                    backMode = false;
                     break;
             }
 
         }
 
-        opMode = false;
-        backMode = false;
-
-        /*if(!opMode && !equaledMode) {
-            backMode = true;
-        }*/
+        console.log(`interResult = ${interResult}  opstring = ${opstring}  opMode = ${opMode}  equaledMode = ${equaledMode}  backMode = ${backMode} And ${e.type} is the EVENT TYPE and  ${e.code} is the KEYCODE`);
     }
+
     DISPLAY.textContent = opstring;
-    
-    console.log(`this.id = ${this.id}  interResult = ${interResult}  opstring = ${opstring}  opMode = ${opMode}  equaledMode = ${equaledMode}  backMode = ${backMode}`);
 }
 
 function operate(arr) {
@@ -141,7 +260,7 @@ function operate(arr) {
     const DIVIDE = (dArr) => {
         if (dArr[0] == 0 || dArr[2] == 0) {
             return snarkResponse = SNARK[ranNum(0, 3)];
-        }else {
+        } else {
             return dArr[0] / dArr[2];
         }
     };
@@ -182,8 +301,9 @@ function operate(arr) {
 }
 
 BUTTONS.forEach(button => button.addEventListener('click', formulate));
-DISPLAY.addEventListener('click', function(e) {
-    let rgb = `rgb(${ranNum(100,255)}, ${ranNum(100,255)}, ${ranNum(100,255)})`
+document.addEventListener('keydown', formulate);
+DISPLAY.addEventListener('click', function (e) {
+    let rgb = `rgb(${ranNum(100, 255)}, ${ranNum(100, 255)}, ${ranNum(100, 255)})`
     let calc = document.getElementById('calc');
     calc.style.background = rgb;
     calc.style.border = `2px solid ${rgb}`;
