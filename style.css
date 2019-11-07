@@ -1,5 +1,15 @@
+html, body {
+    margin: 0;
+    display: flex;
+    min-height: 100vh;
+    min-width: 100vw;
+}
 body {
     background: rgb(60, 60, 60);
+}
+
+#container {
+    margin: auto;
 }
 
 #calc {
@@ -10,7 +20,6 @@ body {
     display: flex;
     flex-direction: column;
     background: rgb(10, 160, 250);
-    border: 2px solid rgb(10, 160, 250);
     margin: auto;
 }
 
@@ -26,7 +35,7 @@ body {
     border-radius: 10px;
     font-size: 2.5em;
     text-align: right;
-    padding: 5px;
+    padding: 10px 25px 10px 0px;
     color: rgb(60, 60, 60);
     word-break: break-word;
     /*overflow-wrap: break-word;*/
@@ -35,7 +44,6 @@ body {
 #buttons_container {
     height: 560px;
     margin: 20px 10px;
-    border-radius: 5px;
     display: flex;
     justify-content: space-evenly;
 }
@@ -66,4 +74,8 @@ body {
 
 .butts:hover {
     cursor: pointer;
+}
+
+#disp:hover {
+    cursor: progress;
 }

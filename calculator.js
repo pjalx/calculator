@@ -122,10 +122,6 @@ function formulate(e) {
 
             opMode = false;
             backMode = false;
-
-            /*if(!opMode && !equaledMode) {
-                backMode = true;
-            }*/
         }
 
         console.log(`this.id = ${this.id}  interResult = ${interResult}  opstring = ${opstring}  opMode = ${opMode}  equaledMode = ${equaledMode}  backMode = ${backMode} And ${e.type} is the EVENT TYPE`);
@@ -209,6 +205,7 @@ function formulate(e) {
                     backMode = false;
                     break;
                 case 'KeyC':
+                case 'End':
                     opstring = `0`;
                     opArray = [];
                     tempArray = [];
@@ -293,7 +290,7 @@ function operate(arr) {
         nArr.splice(sumOrDifference - 1, 3, tempSlice);
         sumOrDifference = nArr.findIndex(index => /^[+-]$/.test(index));
     }
-    //(snarkResponse) ? backdMode = false : backMode = true;
+
     (snarkResponse) ? numMode = false : numMode = true;
     (snarkResponse) ? equaledMode = false : equaledMode = true;
     (snarkResponse) ? interResult = `` : interResult = nArr.join();
@@ -301,10 +298,9 @@ function operate(arr) {
 }
 
 BUTTONS.forEach(button => button.addEventListener('click', formulate));
-document.addEventListener('keydown', formulate);
+document.body.addEventListener('keydown', formulate);
 DISPLAY.addEventListener('click', function (e) {
     let rgb = `rgb(${ranNum(100, 255)}, ${ranNum(100, 255)}, ${ranNum(100, 255)})`
     let calc = document.getElementById('calc');
     calc.style.background = rgb;
-    calc.style.border = `2px solid ${rgb}`;
 });
